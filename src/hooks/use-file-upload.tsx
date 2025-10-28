@@ -7,12 +7,11 @@ export const SUPPORTED_FILE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/gif",
-  "image/webp",
-  "application/pdf",
+  "image/webp"
 ];
 
 // 300KB file size limit untill @rwai/langgraphjs-checkpoint-dynamodb supports splitting larger files
-export const MAX_FILE_SIZE = 300 * 1024;
+export const MAX_FILE_SIZE = 500 * 1024;
 
 interface UseFileUploadOptions {
   initialBlocks?: Base64ContentBlock[];
