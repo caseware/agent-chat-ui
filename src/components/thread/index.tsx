@@ -45,6 +45,7 @@ import {
   ArtifactTitle,
   useArtifactContext,
 } from "./artifact";
+import { handleAuthError } from "@/lib/redirect";
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -161,6 +162,11 @@ export function Thread() {
       const message = (stream.error as any).message;
       if (!message || lastError.current === message) {
         // Message has already been logged. do not modify ref, return early.
+        return;
+      }
+
+      // Check if this is an auth error and redirect if so
+      if (handleAuthError(stream.error)) {
         return;
       }
 
