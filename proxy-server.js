@@ -255,6 +255,58 @@ const server = createServer(async (req, res) => {
   req.pipe(proxyReq);
 });
 
+// Handle WebSocket upgrades for HMR
+server.on("upgrade", (req, socket, head) => {
+  // Handle socket errors to prevent crashes
+  socket.on("error", (err) => {
+    console.error("Client socket error:", err.message);
+  });
+
+  // Check if this is a Next.js HMR WebSocket request
+  if (req.url.startsWith("/_next/webpack-hmr")) {
+    console.log(`[WebSocket PROXY] ${req.url} -> http://localhost:${CLIENT_APP_PORT}${req.url}`);
+    
+    const proxyReq = http.request({
+      hostname: "localhost",
+      port: CLIENT_APP_PORT,
+      path: req.url,
+      method: req.method,
+      headers: req.headers,
+    });
+
+    proxyReq.on("upgrade", (proxyRes, proxySocket, proxyHead) => {
+      // Handle proxy socket errors
+      proxySocket.on("error", (err) => {
+        console.error("Proxy socket error:", err.message);
+        socket.destroy();
+      });
+
+      socket.write("HTTP/1.1 101 Switching Protocols\r\n");
+      for (const [key, value] of Object.entries(proxyRes.headers)) {
+        socket.write(`${key}: ${value}\r\n`);
+      }
+      socket.write("\r\n");
+      socket.write(proxyHead);
+      
+      // Pipe bidirectionally and handle cleanup
+      proxySocket.pipe(socket);
+      socket.pipe(proxySocket);
+      
+      socket.on("close", () => proxySocket.destroy());
+      proxySocket.on("close", () => socket.destroy());
+    });
+
+    proxyReq.on("error", (err) => {
+      console.error("WebSocket proxy request error:", err.message);
+      socket.destroy();
+    });
+
+    proxyReq.end();
+  } else {
+    socket.destroy();
+  }
+});
+
 server.on("error", (err) => {
   console.error("Server error:", err);
 });
