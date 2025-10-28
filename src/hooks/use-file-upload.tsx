@@ -7,9 +7,11 @@ export const SUPPORTED_FILE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/gif",
-  "image/webp",
-  "application/pdf",
+  "image/webp"
 ];
+
+// 300KB file size limit until @rwai/langgraphjs-checkpoint-dynamodb supports splitting larger files
+export const MAX_FILE_SIZE = 300 * 1024;
 
 interface UseFileUploadOptions {
   initialBlocks?: Base64ContentBlock[];
@@ -54,16 +56,26 @@ export function useFileUpload({
     const invalidFiles = fileArray.filter(
       (file) => !SUPPORTED_FILE_TYPES.includes(file.type),
     );
-    const duplicateFiles = validFiles.filter((file) =>
+    const tooLargeFiles = validFiles.filter((file) => file.size > MAX_FILE_SIZE);
+    const acceptableSizeFiles = validFiles.filter((file) => file.size <= MAX_FILE_SIZE);
+    const duplicateFiles = acceptableSizeFiles.filter((file) =>
       isDuplicate(file, contentBlocks),
     );
-    const uniqueFiles = validFiles.filter(
+    const uniqueFiles = acceptableSizeFiles.filter(
       (file) => !isDuplicate(file, contentBlocks),
     );
 
     if (invalidFiles.length > 0) {
       toast.error(
         "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, WEBP image or a PDF.",
+      );
+    }
+    if (tooLargeFiles.length > 0) {
+      toast.error(
+        `${tooLargeFiles.length > 1 ? "Files are" : "File is"} too large to upload. Please keep files under 300KB.`,
+        {
+          description: `${tooLargeFiles.map((f) => f.name).join(", ")}`,
+        },
       );
     }
     if (duplicateFiles.length > 0) {
@@ -114,16 +126,26 @@ export function useFileUpload({
       const invalidFiles = files.filter(
         (file) => !SUPPORTED_FILE_TYPES.includes(file.type),
       );
-      const duplicateFiles = validFiles.filter((file) =>
+      const tooLargeFiles = validFiles.filter((file) => file.size > MAX_FILE_SIZE);
+      const acceptableSizeFiles = validFiles.filter((file) => file.size <= MAX_FILE_SIZE);
+      const duplicateFiles = acceptableSizeFiles.filter((file) =>
         isDuplicate(file, contentBlocks),
       );
-      const uniqueFiles = validFiles.filter(
+      const uniqueFiles = acceptableSizeFiles.filter(
         (file) => !isDuplicate(file, contentBlocks),
       );
 
       if (invalidFiles.length > 0) {
         toast.error(
-          "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, WEBP image or a PDF.",
+            "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, or WEBP image.",
+        );
+      }
+      if (tooLargeFiles.length > 0) {
+        toast.error(
+          `${tooLargeFiles.length > 1 ? "Files are" : "File is"} too large to upload. Please keep files under 300KB.`,
+          {
+            description: `${tooLargeFiles.map((f) => f.name).join(", ")}`,
+          },
         );
       }
       if (duplicateFiles.length > 0) {
@@ -220,6 +242,8 @@ export function useFileUpload({
     const invalidFiles = files.filter(
       (file) => !SUPPORTED_FILE_TYPES.includes(file.type),
     );
+    const tooLargeFiles = validFiles.filter((file) => file.size > MAX_FILE_SIZE);
+    const acceptableSizeFiles = validFiles.filter((file) => file.size <= MAX_FILE_SIZE);
     const isDuplicate = (file: File) => {
       if (file.type === "application/pdf") {
         return contentBlocks.some(
@@ -239,11 +263,19 @@ export function useFileUpload({
       }
       return false;
     };
-    const duplicateFiles = validFiles.filter(isDuplicate);
-    const uniqueFiles = validFiles.filter((file) => !isDuplicate(file));
+    const duplicateFiles = acceptableSizeFiles.filter(isDuplicate);
+    const uniqueFiles = acceptableSizeFiles.filter((file) => !isDuplicate(file));
     if (invalidFiles.length > 0) {
       toast.error(
-        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, WEBP image or a PDF.",
+        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, or WEBP image.",
+      );
+    }
+    if (tooLargeFiles.length > 0) {
+      toast.error(
+        `${tooLargeFiles.length > 1 ? "Files are" : "File is"} too large to upload. Please keep files under 300KB.`,
+        {
+          description: `${tooLargeFiles.map((f) => f.name).join(", ")}`,
+        },
       );
     }
     if (duplicateFiles.length > 0) {

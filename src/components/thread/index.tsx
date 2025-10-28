@@ -505,7 +505,7 @@ export function Thread() {
                         >
                           <Plus className="size-5 text-gray-600" />
                           <span className="text-sm text-gray-600">
-                            Upload PDF or Image
+                            Upload Image
                           </span>
                         </Label>
                         <input
@@ -513,7 +513,7 @@ export function Thread() {
                           type="file"
                           onChange={handleFileUpload}
                           multiple
-                          accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
+                          accept="image/jpeg,image/png,image/gif,image/webp"
                           className="hidden"
                         />
                         {stream.isLoading ? (
