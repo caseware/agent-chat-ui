@@ -24,6 +24,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
+import { redirectToLogin } from "@/lib/redirect";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -58,7 +59,9 @@ async function checkGraphStatus(
         },
       }),
     });
-
+    if (res.status === 403 || res.status === 401) {
+      redirectToLogin();
+    }
     return res.ok;
   } catch (e) {
     console.error(e);
@@ -125,10 +128,6 @@ const StreamSession = ({
     </StreamContext.Provider>
   );
 };
-
-// Default values for the form
-const DEFAULT_API_URL = "http://localhost:2024";
-const DEFAULT_ASSISTANT_ID = "agent";
 
 /**
  * Resolve a potentially relative URL to an absolute URL.
@@ -246,7 +245,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="apiUrl"
                 name="apiUrl"
                 className="bg-background"
-                defaultValue={apiUrl || DEFAULT_API_URL}
+                defaultValue={apiUrl}
                 required
               />
             </div>
@@ -264,7 +263,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
                 id="assistantId"
                 name="assistantId"
                 className="bg-background"
-                defaultValue={assistantId || DEFAULT_ASSISTANT_ID}
+                defaultValue={assistantId}
                 required
               />
             </div>
