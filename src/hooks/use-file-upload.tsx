@@ -268,7 +268,7 @@ export function useFileUpload({
     const uniqueFiles = acceptableSizeFiles.filter((file) => !isDuplicate(file));
     if (invalidFiles.length > 0) {
       toast.error(
-        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, WEBP image or a PDF.",
+        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, or WEBP image.",
       );
     }
     if (tooLargeFiles.length > 0) {
