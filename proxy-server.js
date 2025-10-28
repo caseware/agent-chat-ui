@@ -8,7 +8,7 @@ const CLIENT_APP_PORT = 3000;
 const SERVER_APP_PORT = 3388;
 const CW_CLOUD = "https://us.cwcloudtest.com";
 const SERVICE_NAME = "ai-assistant";
-const CLIENT_APP_NAME = "aida-agent";
+const CLIENT_APP_NAME = "agent-chat-ui";
 // If true, proxy service API requests to local server (localhost), otherwise to CW_CLOUD
 const USE_LOCAL_SERVER = true; // Set to false to enable cloud proxy mode
 
@@ -90,9 +90,7 @@ function parseAidaUrl(url) {
 const server = createServer(async (req, res) => {
   // Proxy service API requests to local server app or CW_CLOUD
   if (isServiceApiRequest(req.url)) {
-    // Extract firm from the incoming URL (assume /{firm}/ms/{SERVICE_NAME}/...)
-    const firmMatch = req.url.match(/^\/([^/]+)\/ms\//);
-    const firm = firmMatch ? firmMatch[1] : undefined;
+    const firm = req.url.split('/')[1];
     let firmGuid;
     if (firm) {
       try {
@@ -268,9 +266,7 @@ server.listen(PROXY_PORT, () => {
 
 // Utility function to check if a request is for the service API
 function isServiceApiRequest(url) {
-  // Matches /something/ms/ai-assistant/...
-  const pattern = new RegExp(`/ms/${SERVICE_NAME}(/|$)`);
-  return pattern.test(url);
+  return url.indexOf(`/ms/${SERVICE_NAME}`)!== -1;
 }
 
 // Utility function to rewrite the path for service API requests
