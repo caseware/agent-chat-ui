@@ -10,8 +10,8 @@ export const SUPPORTED_FILE_TYPES = [
   "image/webp"
 ];
 
-// 300KB file size limit untill @rwai/langgraphjs-checkpoint-dynamodb supports splitting larger files
-export const MAX_FILE_SIZE = 500 * 1024;
+// 300KB file size limit until @rwai/langgraphjs-checkpoint-dynamodb supports splitting larger files
+export const MAX_FILE_SIZE = 300 * 1024;
 
 interface UseFileUploadOptions {
   initialBlocks?: Base64ContentBlock[];
@@ -137,7 +137,7 @@ export function useFileUpload({
 
       if (invalidFiles.length > 0) {
         toast.error(
-          "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, WEBP image or a PDF.",
+            "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, or WEBP image.",
         );
       }
       if (tooLargeFiles.length > 0) {
@@ -267,7 +267,7 @@ export function useFileUpload({
     const uniqueFiles = acceptableSizeFiles.filter((file) => !isDuplicate(file));
     if (invalidFiles.length > 0) {
       toast.error(
-        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, WEBP image or a PDF.",
+        "You have pasted an invalid file type. Please paste a JPEG, PNG, GIF, or WEBP image.",
       );
     }
     if (tooLargeFiles.length > 0) {
