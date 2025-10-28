@@ -138,7 +138,7 @@ export function useFileUpload({
 
       if (invalidFiles.length > 0) {
         toast.error(
-          "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, WEBP image or a PDF.",
+            "You have uploaded invalid file type. Please upload a JPEG, PNG, GIF, or WEBP image.",
         );
       }
       if (tooLargeFiles.length > 0) {
