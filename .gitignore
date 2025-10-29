@@ -26,6 +26,5 @@ out
 
 # LangGraph API
 .langgraph_api
-.env
 .next/
 next-env.d.ts
