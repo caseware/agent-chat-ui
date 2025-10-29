@@ -10,7 +10,7 @@ const CW_CLOUD = "https://us.cwcloudtest.com";
 const SERVICE_NAME = "ai-assistant";
 const CLIENT_APP_NAME = "agent-chat-ui";
 // If true, proxy service API requests to local server (localhost), otherwise to CW_CLOUD
-const USE_LOCAL_SERVER = true; // Set to false to enable cloud proxy mode
+const USE_LOCAL_SERVER = false; // Set to true to use local server for service API requests
 
 // Map of firm -> firmGuid or Promise
 const firmGuids = new Map();
