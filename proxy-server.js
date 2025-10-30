@@ -194,8 +194,17 @@ const server = createServer(async (req, res) => {
         console.error(`Error resolving firm guid for ${firm}:`, err);
       }
     }
+    
+    // Add trailing slash if not present after agent-chat-ui
+    let rewrittenUrl = req.url;
+    const appPathPattern = new RegExp(`/s/${CLIENT_APP_NAME}(?![/])`);
+    if (appPathPattern.test(rewrittenUrl)) {
+      rewrittenUrl = rewrittenUrl.replace(appPathPattern, `/s/${CLIENT_APP_NAME}/`);
+      console.log(`[aida PROXY] Added trailing slash: ${req.url} -> ${rewrittenUrl}`);
+    }
+    
     // Route to local client app (always HTTP), always to root but preserve query string
-    const targetUrl = new URL(req.url, `http://localhost:${CLIENT_APP_PORT}`);
+    const targetUrl = new URL(rewrittenUrl, `http://localhost:${CLIENT_APP_PORT}`);
     const path = targetUrl.search ? "/" + targetUrl.search : "/";
     const options = {
       hostname: "localhost",
@@ -206,7 +215,7 @@ const server = createServer(async (req, res) => {
     };
     // Log incoming and outgoing proxy request
     console.log(
-      `[aida PROXY] ${req.url} -> http://localhost:${CLIENT_APP_PORT}${path}`,
+      `[aida PROXY] ${rewrittenUrl} -> http://localhost:${CLIENT_APP_PORT}${path}`,
     );
     const proxyReq = http.request(options, (proxyRes) => {
       res.writeHead(proxyRes.statusCode, proxyRes.headers);
