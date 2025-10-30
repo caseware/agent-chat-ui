@@ -25,6 +25,7 @@ import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
 import { redirectToLogin } from "@/lib/redirect";
+import { getEngagementHeader } from "@/lib/headers";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -53,11 +54,10 @@ async function checkGraphStatus(
 ): Promise<boolean> {
   try {
     const res = await fetch(`${apiUrl}/info`, {
-      ...(apiKey && {
-        headers: {
-          "X-Api-Key": apiKey,
-        },
-      }),
+      headers: {
+        ...(apiKey && { "X-Api-Key": apiKey }),
+        ...getEngagementHeader(),
+      },
     });
     if (res.status === 403 || res.status === 401) {
       redirectToLogin();
@@ -88,6 +88,7 @@ const StreamSession = ({
     assistantId,
     threadId: threadId ?? null,
     fetchStateHistory: true,
+    defaultHeaders: getEngagementHeader(),
     onCustomEvent: (event, options) => {
       if (isUIMessage(event) || isRemoveUIMessage(event)) {
         options.mutate((prev) => {
