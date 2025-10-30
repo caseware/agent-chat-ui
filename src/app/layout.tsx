@@ -10,14 +10,16 @@ const inter = Inter({
   display: "swap",
 });
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 export const metadata: Metadata = {
   title: "AiDA",
   description: "AiDA Agent Chat",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" }
+      { url: `${basePath}/favicon.svg`, type: "image/svg+xml" }
     ],
-    apple: { url: "/favicon.svg", type: "image/svg+xml" },
+    apple: { url: `${basePath}/favicon.svg`, type: "image/svg+xml" },
   },
 };
 
