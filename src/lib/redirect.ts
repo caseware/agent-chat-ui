@@ -20,7 +20,13 @@ export function redirectToLogin(): void {
   
   // Build redirectTo as relative path from /webapps/ to the target page
   // Remove the first segment from pathname to get relative path
-  const remainingPath = pathSegments.slice(1).join('/');
+  let remainingPath = pathSegments.slice(1).join('/');
+  
+  // Ensure trailing slash is preserved (important for proper routing)
+  if (remainingPath && !remainingPath.endsWith('/')) {
+    remainingPath += '/';
+  }
+  
   const current = `../${remainingPath}${search}${hash}`;
 
   // Target login URL pattern: {origin}{basePath}/webapps/#login?redirectTo=...
