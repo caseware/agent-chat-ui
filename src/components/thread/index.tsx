@@ -491,13 +491,13 @@ export function Thread() {
                             onClick={() => stream.stop()}
                             className="ml-auto"
                           >
-                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                            <LoaderCircle className="h-4 w-4 animate-spin cursor-pointer" />
                             Cancel
                           </Button>
                         ) : (
                           <Button
                             type="submit"
-                            className="ml-auto shadow-md transition-all"
+                            className="ml-auto shadow-md transition-all cursor-pointer"
                             disabled={
                               isLoading ||
                               (!input.trim() && contentBlocks.length === 0)
