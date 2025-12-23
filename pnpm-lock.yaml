@@ -178,7 +178,7 @@ importers:
         specifier: ^27.0.1
         version: 27.0.1(postcss@8.5.3)
       next:
-        specifier: ^15.4.8
+        specifier: ^15.5.9
         version: 15.5.9(@babel/core@7.28.5)(@playwright/test@1.52.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       nodemon:
         specifier: ^3.1.10
