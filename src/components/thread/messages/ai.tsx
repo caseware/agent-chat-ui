@@ -215,7 +215,13 @@ export function AssistantMessage({
                 isLoading={isLoading}
               />
               <CommandBar
-                content={contentString}
+                content={
+                  hasToolCalls && message.tool_calls
+                    ? contentString 
+                      ? `${contentString}\n\nTool Calls:\n${JSON.stringify(message.tool_calls.map(tc => tc.args), null, 2)}`
+                      : JSON.stringify(message.tool_calls.map(tc => tc.args), null, 2)
+                    : contentString
+                }
                 isLoading={isLoading}
                 isAiMessage={true}
                 handleRegenerate={() => handleRegenerate(parentCheckpoint)}

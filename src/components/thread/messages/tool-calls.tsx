@@ -15,7 +15,7 @@ export function ToolCalls({
   if (!toolCalls || toolCalls.length === 0) return null;
 
   return (
-    <div className="mx-auto grid max-w-3xl grid-rows-[1fr_auto] gap-2">
+    <div className="grid max-w-3xl grid-rows-[1fr_auto] gap-2">
       {toolCalls.map((tc, idx) => {
         const args = tc.args as Record<string, any>;
         const hasArgs = Object.keys(args).length > 0;
@@ -35,28 +35,32 @@ export function ToolCalls({
               </h3>
             </div>
             {hasArgs ? (
-              <table className="min-w-full divide-y divide-gray-200">
-                <tbody className="divide-y divide-gray-200">
-                  {Object.entries(args).map(([key, value], argIdx) => (
-                    <tr key={argIdx}>
-                      <td className="px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900">
-                        {key}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-500">
-                        {isComplexValue(value) ? (
-                          <code className="rounded bg-gray-50 px-2 py-1 font-mono text-sm break-all">
-                            {JSON.stringify(value, null, 2)}
-                          </code>
-                        ) : (
-                          String(value)
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="min-w-full bg-gray-100 p-3">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <tbody className="divide-y divide-gray-200">
+                    {Object.entries(args).map(([key, value], argIdx) => (
+                      <tr key={argIdx}>
+                        <td className="px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900">
+                          {key}
+                        </td>
+                        <td className="px-4 py-2 text-sm text-gray-500">
+                          {isComplexValue(value) ? (
+                            <code className="rounded bg-gray-50 px-2 py-1 font-mono text-sm break-all">
+                              {JSON.stringify(value, null, 2)}
+                            </code>
+                          ) : (
+                            String(value)
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
-              <code className="block p-3 text-sm">{"{}"}</code>
+              <div className="min-w-full bg-gray-100 p-3">
+                <code className="block text-sm">{"{}"}</code>
+              </div>
             )}
           </div>
         );
@@ -85,12 +89,12 @@ export function ToolResult({ message }: { message: ToolMessage }) {
     ? JSON.stringify(parsedContent, null, 2)
     : String(message.content);
   const contentLines = contentStr.split("\n");
-  const shouldTruncate = contentLines.length > 4 || contentStr.length > 500;
+  const shouldTruncate = contentLines.length > 2 || contentStr.length > 150;
   const displayedContent =
     shouldTruncate && !isExpanded
-      ? contentStr.length > 500
-        ? contentStr.slice(0, 500) + "..."
-        : contentLines.slice(0, 4).join("\n") + "\n..."
+      ? contentStr.length > 150
+        ? contentStr.slice(0, 150) + "..."
+        : contentLines.slice(0, 2).join("\n") + "\n..."
       : contentStr;
 
   return (
@@ -139,8 +143,10 @@ export function ToolResult({ message }: { message: ToolMessage }) {
                       {(Array.isArray(parsedContent)
                         ? isExpanded
                           ? parsedContent
-                          : parsedContent.slice(0, 5)
-                        : Object.entries(parsedContent)
+                          : parsedContent.slice(0, 2)
+                        : isExpanded
+                        ? Object.entries(parsedContent)
+                        : Object.entries(parsedContent).slice(0, 2)
                       ).map((item, argIdx) => {
                         const [key, value] = Array.isArray(parsedContent)
                           ? [argIdx, item]
@@ -153,7 +159,16 @@ export function ToolResult({ message }: { message: ToolMessage }) {
                             <td className="px-4 py-2 text-sm text-gray-500">
                               {isComplexValue(value) ? (
                                 <code className="rounded bg-gray-50 px-2 py-1 font-mono text-sm break-all">
-                                  {JSON.stringify(value, null, 2)}
+                                  {(() => {
+                                    const stringified = JSON.stringify(value, null, 2);
+                                    if (!isExpanded && stringified.length > 1000) {
+                                      const lines = stringified.split('\n');
+                                      return lines.length > 30 
+                                        ? lines.slice(0, 30).join('\n') + '\n  ...'
+                                        : stringified.slice(0, 1000) + '...';
+                                    }
+                                    return stringified;
+                                  })()}
                                 </code>
                               ) : (
                                 String(value)
@@ -172,8 +187,8 @@ export function ToolResult({ message }: { message: ToolMessage }) {
           </div>
           {((shouldTruncate && !isJsonContent) ||
             (isJsonContent &&
-              Array.isArray(parsedContent) &&
-              parsedContent.length > 5)) && (
+              ((Array.isArray(parsedContent) && parsedContent.length > 2) ||
+               (!Array.isArray(parsedContent) && Object.keys(parsedContent).length > 2)))) && (
             <motion.button
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex w-full cursor-pointer items-center justify-center border-t-[1px] border-gray-200 py-2 text-gray-500 transition-all duration-200 ease-in-out hover:bg-gray-50 hover:text-gray-600"
