@@ -140,12 +140,6 @@ export function CommandBar({
     );
   }
 
-  if (!isHumanMessage && !isAiMessage) {
-    throw new Error(
-      "One of isHumanMessage or isAiMessage must be set to true.",
-    );
-  }
-
   if (
     isHumanMessage &&
     (isEditing === undefined ||

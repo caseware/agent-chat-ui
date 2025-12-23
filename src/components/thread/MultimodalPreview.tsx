@@ -1,7 +1,6 @@
 import React from "react";
 import { File, X as XIcon } from "lucide-react";
 import { ContentBlock } from "@langchain/core/messages";
-import type { Base64ContentBlock } from "@langchain/core/messages";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 export interface MultimodalPreviewProps {

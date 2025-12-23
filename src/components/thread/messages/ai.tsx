@@ -151,6 +151,18 @@ export function AssistantMessage({
         {isToolResult ? (
           <>
             <ToolResult message={message} />
+            <div
+              className={cn(
+                "mr-auto flex items-center gap-2 transition-opacity",
+                "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100",
+              )}
+            >
+              <CommandBar
+                content={typeof message.content === "string" ? message.content : JSON.stringify(message.content)}
+                isLoading={isLoading}
+                isAiMessage={true}
+              />
+            </div>
             <Interrupt
               interrupt={threadInterrupt}
               isLastMessage={isLastMessage}
