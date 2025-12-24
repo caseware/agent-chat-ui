@@ -13,6 +13,35 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Detects if content is JSON-encoded and unescapes it.
+ * Handles cases where tool results are JSON-stringified strings.
+ */
+function unescapeContent(content: string): string {
+  // Try to parse as JSON first - if it's a JSON-stringified string, parse it
+  try {
+    const parsed = JSON.parse(content);
+    // If parsed result is a string, return it (this handles JSON-encoded strings)
+    if (typeof parsed === 'string') {
+      return parsed;
+    }
+  } catch {
+    // Not valid JSON, continue with manual unescape
+  }
+  
+  // Fallback: manual unescape for literal escape sequences
+  // Check if content appears to be escaped (contains literal \n or \t)
+  if (content.includes('\\n') || content.includes('\\t') || content.includes('\\"')) {
+    return content
+      .replace(/\\n/g, '\n')
+      .replace(/\\t/g, '\t')
+      .replace(/\\r/g, '\r')
+      .replace(/\\"/g, '"')
+      .replace(/\\\\/g, '\\');
+  }
+  return content;
+}
+
 function ContentCopyable({
   content,
   disabled,
@@ -24,7 +53,9 @@ function ContentCopyable({
 
   const handleCopy = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(content);
+    // Unescape content before copying
+    const contentToCopy = unescapeContent(content);
+    navigator.clipboard.writeText(contentToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

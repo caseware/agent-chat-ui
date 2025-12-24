@@ -158,7 +158,7 @@ export function AssistantMessage({
               )}
             >
               <CommandBar
-                content={typeof message.content === "string" ? message.content : JSON.stringify(message.content)}
+                content={typeof message.content === "string" ? message.content : JSON.stringify(message.content, null, 2)}
                 isLoading={isLoading}
                 isAiMessage={true}
               />
