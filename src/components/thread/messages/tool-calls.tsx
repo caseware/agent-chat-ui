@@ -26,7 +26,8 @@ export function ToolCalls({
           >
             <div className="border-b border-gray-200 bg-gray-50 px-4 py-2">
               <h3 className="font-medium text-gray-900">
-                {tc.name}
+                Tool Use:{" "}
+                <code className="rounded bg-gray-100 px-2 py-1">{tc.name}</code>
                 {tc.id && (
                   <code className="ml-2 rounded bg-gray-100 px-2 py-1 text-sm">
                     {tc.id}
@@ -110,7 +111,7 @@ export function ToolResult({ message }: { message: ToolMessage }) {
                 </code>
               </h3>
             ) : (
-              <h3 className="font-medium text-gray-900">Tool Result</h3>
+              <h3 className="font-medium text-gray-900">Tool Result:</h3>
             )}
             {message.tool_call_id && (
               <code className="ml-2 rounded bg-gray-100 px-2 py-1 text-sm">
