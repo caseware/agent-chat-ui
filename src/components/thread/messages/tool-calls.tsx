@@ -49,7 +49,16 @@ export function ToolCalls({
                         <td className="px-4 py-2 text-sm text-gray-500">
                           {isComplexValue(value) ? (
                             <code className="rounded bg-gray-50 px-2 py-1 font-mono text-sm break-all">
-                              {JSON.stringify(value, null, 2)}
+                              {(() => {
+                                const stringified = JSON.stringify(value, null, 2);
+                                if (stringified.length > 1000) {
+                                  const lines = stringified.split('\n');
+                                  return lines.length > 30 
+                                    ? lines.slice(0, 30).join('\n') + '\n  ...'
+                                    : stringified.slice(0, 1000) + '...';
+                                }
+                                return stringified;
+                              })()}
                             </code>
                           ) : (
                             String(value)
