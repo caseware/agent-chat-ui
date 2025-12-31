@@ -25,11 +25,13 @@ export function ToolCalls({
             className="overflow-hidden rounded-lg border border-gray-200"
           >
             <div className="border-b border-gray-200 bg-gray-50 px-4 py-2">
-              <h3 className="font-medium text-gray-900">
-                Tool Use:{" "}
-                <code className="rounded bg-gray-100 px-2 py-1">{tc.name}</code>
+              <h3 className="flex items-center justify-between font-medium text-gray-900">
+                <span>
+                  Tool Use:{" "}
+                  <code className="rounded bg-gray-100 px-2 py-1">{tc.name}</code>
+                </span>
                 {tc.id && (
-                  <code className="ml-2 rounded bg-gray-100 px-2 py-1 text-sm">
+                  <code className="rounded bg-gray-100 px-2 py-1 text-sm">
                     {tc.id}
                   </code>
                 )}
